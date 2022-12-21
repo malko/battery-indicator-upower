@@ -1,0 +1,8 @@
+{
+  "name": "Battery indicator (upower)",
+  "description": "Display battery level indicators as reported by upower",
+  "uuid": "battery-indicator@jgotti.org",
+  "shell-version": [
+    "42"
+  ]
+}

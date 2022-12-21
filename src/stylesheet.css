@@ -1,0 +1,8 @@
+/* Add your custom extension styling here */
+.battery-indicator-boxlayout .system-status-icon{
+	margin-right: 0px;
+}
+.battery-indicator-label {
+	font-size: .8em;
+	margin-left: 0;
+}
