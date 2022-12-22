@@ -1,3 +1,20 @@
+/* pref.js
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * SPDX-License-Identifier: GPL-2.0-or-later
+ */
 const {Adw, GLib, Gtk, Gio} = imports.gi
 
 // It's common practice to keep GNOME API and JS imports in separate blocks
@@ -11,35 +28,8 @@ const Me = ExtensionUtils.getCurrentExtension()
  * @param {ExtensionMeta} meta - An extension meta object, described below.
  */
 function init(meta) {
-	// log(`initializing ${meta.metadata.name} Preferences`)
+
 }
-
-/**
- * This function is called when the preferences window is first created to build
- * and return a GTK widget.
- *
- * As of GNOME 42, the preferences window will be a `Adw.PreferencesWindow`.
- * Intermediate `Adw.PreferencesPage` and `Adw.PreferencesGroup` widgets will be
- * used to wrap the returned widget if necessary.
- *
- * @returns {Gtk.Widget} the preferences widget
- */
-// function buildPrefsWidget() {
-// 	// This could be any GtkWidget subclass, although usually you would choose
-// 	// something like a GtkGrid, GtkBox or GtkNotebook
-// 	const prefsWidget = new Gtk.Label({
-// 		label: Me.metadata.name,
-// 		visible: true,
-// 	})
-
-// 	// Add a widget to the group. This could be any GtkWidget subclass,
-// 	// although usually you would choose preferences rows such as AdwActionRow,
-// 	// AdwComboRow or AdwRevealerRow.
-// 	const label = new Gtk.Label({ label: `${Me.metadata.name}` })
-// 	group.add(label)
-
-// 	window.add(page)
-// }
 
 /**
  * This function is called when the preferences window is first created to fill
