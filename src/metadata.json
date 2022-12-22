@@ -2,6 +2,7 @@
   "name": "Battery indicator (upower)",
   "description": "Display battery level indicators as reported by upower",
   "uuid": "battery-indicator@jgotti.org",
+  "settings-schema": "org.gnome.shell.extensions.battery-indicator-upower",
   "shell-version": [
     "42"
   ]

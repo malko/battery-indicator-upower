@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.battery-indicator-upower" path="/org/gnome/shell/extensions/battery-indicator-upower/">
+    <!-- See also: https://docs.gtk.org/glib/gvariant-format-strings.html -->
+		<key name="refresh-interval" type="u">
+			<default>300</default>
+			<summary>Number of seconds between refresh (default to 5min)</summary>
+			<description></description>
+			<range min="5" max="86400" />
+		</key>
+		<key name="refresh-menuitem" type="b">
+			<default>true</default>
+			<summary>Whether to display or not a menu item to refresh manually.</summary>
+		</key>
+		<key name="hidden-devices" type="as">
+			<default><![CDATA[[]]]></default>
+			<summary>List of device identifier to hide from the indicator (still showed in the menu)</summary>
+			<description>Devices listed here won't display in the panel indicator unless they are the only device to show.</description>
+		</key>
+  </schema>
+</schemalist>
