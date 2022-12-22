@@ -28,6 +28,11 @@ const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 
 const _ = ExtensionUtils.gettext;
+let settings = {
+	'refresh-interval':300,
+	'refresh-menuitem':true,
+	'hidden-devices':[]
+}
 
 const Ornament = {
 	NONE: 0,
@@ -110,8 +115,6 @@ const Indicator = GObject.registerClass( class Indicator extends PanelMenu.Butto
 		}))
 
 		this.addRefreshMenuItem()
-		// refresh every 5 minutes
-		this.refreshInterval = 300
 		this._refreshTimeout = null
 	}
 
@@ -157,8 +160,8 @@ const Indicator = GObject.registerClass( class Indicator extends PanelMenu.Butto
 			this.menu.addMenuItem(menuItem)
 		})
 
-		this._refreshTimeout = setTimeout(() => this.refreshIndicator(), this.refreshInterval * 1000)
-		this.addRefreshMenuItem()
+		this._refreshTimeout = setTimeout(() => this.refreshIndicator(), (settings["refresh-interval"]||300) * 1000)
+		settings['refresh-menuitem'] && this.addRefreshMenuItem()
 	}
 
 	removeChilds() {
@@ -184,7 +187,6 @@ const Indicator = GObject.registerClass( class Indicator extends PanelMenu.Butto
 		this.menu.addMenuItem(refreshMenuItem)
 	}
 
-
 });
 
 class Extension {
@@ -196,14 +198,25 @@ class Extension {
 	enable() {
 		const indicator = new Indicator()
 		this._indicator = indicator
+		this.settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.battery-indicator-upower')
+		this._updateSettings()
+		this._settingsObserver = this.settings.connect('changed', () => this._updateSettings())
 		Main.panel.addToStatusArea(this._uuid, this._indicator)
 		indicator.refreshIndicator()
 	}
 
 	disable() {
+		this.settings.disconnect(this._settingsObserver)
 		this._indicator?.destroy()
 		clearTimeout(this._indicator?._refreshTimeout)
 		this._indicator = null
+	}
+
+	_updateSettings() {
+		settings['refresh-menuitem'] = this.settings.get_boolean('refresh-menuitem')
+		settings['refresh-interval'] = this.settings.get_uint('refresh-interval')
+		settings['hidden-devices']   = this.settings.get_strv('hidden-devices')
+		this._indicator.refreshIndicator()
 	}
 }
 
