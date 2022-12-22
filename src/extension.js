@@ -15,9 +15,7 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
-
 /* exported init */
-
 const GETTEXT_DOMAIN = 'my-indicator-extension';
 
 const { GObject, St, GLib } = imports.gi;
@@ -26,13 +24,13 @@ const ExtensionUtils = imports.misc.extensionUtils;
 const Main = imports.ui.main;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
+const Me = ExtensionUtils.getCurrentExtension();
 
 const _ = ExtensionUtils.gettext;
-let settings = {
-	'refresh-interval':300,
-	'refresh-menuitem':true,
-	'hidden-devices':[]
-}
+const {settingsDef} = Me.imports.settingsDef
+const SettingsManager = Me.imports.utils.SettingsManager
+
+let settingsManager
 
 const Ornament = {
 	NONE: 0,
@@ -40,6 +38,7 @@ const Ornament = {
 	CHECK: 2,
 	HIDDEN: 3,
 }
+
 
 /** parse output of upower -d */
 const upowerParser = (output) => {
@@ -129,39 +128,59 @@ const Indicator = GObject.registerClass( class Indicator extends PanelMenu.Butto
 		const devices = upowerParser(stdout)
 		this.removeChilds()
 		const container = this._indicatorsBoxLayout
+		const hiddenDevices = settingsManager.get('hidden-devices')
+			.filter((serial) => devices.find(d => d?.serial === serial) ? true : false)
+
 		devices.length && devices.forEach((device, id) => {
+			const {serial, model, state} = device
+			const isHiddenDevice = hiddenDevices.includes(serial)
+			let displayed = !isHiddenDevice
+			if (id===0 && devices.length === hiddenDevices.length) {
+				displayed = true // ensure one device is still visible
+			}
 			const reliable = !device.percentage.match(/ignored/)
 			const percentage = parseInt(device.percentage, 10)+'%'
-			const charging = device.state==='charging'
+			const charging = state==='charging'
 			const icon_name = getDeviceIcon(device)
-			const icon = new St.Icon({
-				icon_name,
-				style_class: 'system-status-icon',
-				style: `margin-right:0;${
-					id ? '' : 'margin-left:0px;' // remove margin for first Icon
-				}${
-					charging ? 'color:yellow;' : ''
-				}`
-			})
-			const label = new St.Label({
-				text: percentage,
-				style_class: 'battery-indicator-label',
-				style: (charging ? 'color:yellow;' : '') + (reliable ? '' : 'font-style:italic;'),
-				y_align: St.Align.END
-			})
-			container.add_child(icon)
-			container.add_child(label)
+			if (displayed) {
+				const icon = new St.Icon({
+					icon_name,
+					style_class: 'system-status-icon',
+					style: `margin-right:0;${
+						id ? '' : 'margin-left:0px;' // remove margin for first Icon
+					}${
+						charging ? 'color:yellow;' : ''
+					}`
+				})
+				const label = new St.Label({
+					text: percentage,
+					style_class: 'battery-indicator-label',
+					style: (charging ? 'color:yellow;' : '') + (reliable ? '' : 'font-style:italic;'),
+					y_align: St.Align.END
+				})
+				container.add_child(icon)
+				container.add_child(label)
+			}
 			const menuItem = makeMenuItem({
-				label: `${device.model} (${device.state||'unknown'}) ${percentage}`,
+				label: `${model} (${state||'unknown'}) ${percentage}`,
 				icon: icon_name,
 				secondaryIcon: device.icon_name,
-				labelStyle: reliable ? '' : 'font-style:italic;'
+				labelStyle: reliable ? '' : 'font-style:italic;',
+				ornament: Ornament[isHiddenDevice ? 'NONE' : 'CHECK']
+				,
+				onActivate: () => {
+					const hiddenDevices = settingsManager.get('hidden-devices').filter(s => s!==serial)
+					isHiddenDevice || hiddenDevices.push(serial)
+					settingsManager.set('hidden-devices', hiddenDevices)
+				}
 			})
 			this.menu.addMenuItem(menuItem)
 		})
 
-		this._refreshTimeout = setTimeout(() => this.refreshIndicator(), (settings["refresh-interval"]||300) * 1000)
-		settings['refresh-menuitem'] && this.addRefreshMenuItem()
+		this._refreshTimeout = setTimeout(() => {
+			this.refreshIndicator()
+		}, (settingsManager.get("refresh-interval")||300) * 1000)
+		settingsManager.get('refresh-menuitem') && this.addRefreshMenuItem()
 	}
 
 	removeChilds() {
@@ -198,26 +217,29 @@ class Extension {
 	enable() {
 		const indicator = new Indicator()
 		this._indicator = indicator
-		this.settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.battery-indicator-upower')
-		this._updateSettings()
-		this._settingsObserver = this.settings.connect('changed', () => this._updateSettings())
-		Main.panel.addToStatusArea(this._uuid, this._indicator)
+		settingsManager = SettingsManager.init(
+			'org.gnome.shell.extensions.battery-indicator-upower',
+			settingsDef
+		)._startListening()
 		indicator.refreshIndicator()
+		this._settingObserver = settingsManager.addChangeObserver(() => {
+			log('CHANGED')
+			indicator.refreshIndicator()
+		})
+		Main.panel.addToStatusArea(this._uuid, this._indicator)
 	}
 
 	disable() {
-		this.settings.disconnect(this._settingsObserver)
+		if (this._settingObserver){
+			this._settingObserver?.()
+			this._settingObserver = null
+		}
 		this._indicator?.destroy()
+		settingsManager = settingsManager.destroy()
 		clearTimeout(this._indicator?._refreshTimeout)
 		this._indicator = null
 	}
 
-	_updateSettings() {
-		settings['refresh-menuitem'] = this.settings.get_boolean('refresh-menuitem')
-		settings['refresh-interval'] = this.settings.get_uint('refresh-interval')
-		settings['hidden-devices']   = this.settings.get_strv('hidden-devices')
-		this._indicator.refreshIndicator()
-	}
 }
 
 function init(meta) {
