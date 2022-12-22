@@ -18,7 +18,7 @@
 /* exported init */
 const GETTEXT_DOMAIN = 'my-indicator-extension';
 
-const { GObject, St, GLib } = imports.gi;
+const { GObject, St, Gio } = imports.gi;
 
 const ExtensionUtils = imports.misc.extensionUtils;
 const Main = imports.ui.main;
@@ -26,7 +26,6 @@ const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
 const Me = ExtensionUtils.getCurrentExtension();
 
-const _ = ExtensionUtils.gettext;
 const {settingsDef} = Me.imports.settingsDef
 const SettingsManager = Me.imports.utils.SettingsManager
 
@@ -39,6 +38,29 @@ const Ornament = {
 	HIDDEN: 3,
 }
 
+/** spwan async upower -d command an return promise of the result */
+const spawnAsync = async (cmd) => new Promise((resolve, reject) => {
+	try {
+		let proc = Gio.Subprocess.new(
+			cmd,
+			Gio.SubprocessFlags.STDOUT_PIPE | Gio.SubprocessFlags.STDERR_PIPE
+		)
+		proc.communicate_utf8_async(null, null, (proc, res) => {
+			try {
+				let [, stdout, stderr] = proc.communicate_utf8_finish(res)
+				if (proc.get_successful()) {
+					resolve(stdout)
+				} else {
+					reject(stderr)
+				}
+			} catch (e) {
+				logError(e)
+			}
+		});
+	} catch (e) {
+		logError(e)
+	}
+})
 
 /** parse output of upower -d */
 const upowerParser = (output) => {
@@ -102,7 +124,7 @@ const makeMenuItem = (params) => {
 
 const Indicator = GObject.registerClass( class Indicator extends PanelMenu.Button {
 	_init() {
-		super._init(0.0, _('Battery indicator'))
+		super._init(0.0, 'Battery indicator')
 
 		this._indicatorsBoxLayout = new St.BoxLayout({style_class:'battery-indicator-boxlayout'})
 
@@ -117,13 +139,15 @@ const Indicator = GObject.registerClass( class Indicator extends PanelMenu.Butto
 		this._refreshTimeout = null
 	}
 
-	refreshIndicator() {
+	async refreshIndicator() {
 		this._refreshTimeout && clearTimeout(this._refreshTimeout)
-		let [, stdout, stderr, status] = GLib.spawn_command_line_sync('upower -d')
-		if (status !== 0) {
-			stderr instanceof Uint8Array && (stderr = BiteArray.toString(stderr))
-			logError('Error:',stderr)
-			throw new Error(stderr)
+		let stdout
+		try {
+			stdout = await spawnAsync(['upower', '-d'])
+		} catch (e) {
+			e instanceof Uint8Array && (e = BiteArray.toString(e))
+			logError('Error:',e)
+			throw new Error(e)
 		}
 		const devices = upowerParser(stdout)
 		this.removeChilds()
@@ -196,7 +220,7 @@ const Indicator = GObject.registerClass( class Indicator extends PanelMenu.Butto
 
 	addRefreshMenuItem() {
 		const refreshMenuItem = makeMenuItem({
-			label: _('Refresh now'),
+			label: 'Refresh now',
 			icon: 'emblem-synchronizing-symbolic',
 			onActivate: () => {
 				clearTimeout(this._refreshTimeout)
@@ -223,7 +247,6 @@ class Extension {
 		)._startListening()
 		indicator.refreshIndicator()
 		this._settingObserver = settingsManager.addChangeObserver(() => {
-			log('CHANGED')
 			indicator.refreshIndicator()
 		})
 		Main.panel.addToStatusArea(this._uuid, this._indicator)
