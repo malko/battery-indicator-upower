@@ -17,6 +17,7 @@ You can via the extension prefs set the refresh interval and wether to add a man
 
 Also you can decide to show/hide devices from the panel indicator by clicking them in the indicator menu. item with now check mark in front of it are marked as hidden.
 
+Other settings are self explanatory
 
 # Screenshots
 
