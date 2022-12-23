@@ -13,7 +13,7 @@ upower is not always reliable on reporting battery level for connected devices. 
 
 
 # Settings
-You can via the extension prefs set the refresh interval and wether to add a manual refresh button or not. By default the refresh interval is 5 minutes.
+You can via the extension prefs set the refresh interval and whether to add a manual refresh button or not. By default the refresh interval is 5 minutes.
 
 Also you can decide to show/hide devices from the panel indicator by clicking them in the indicator menu. item with now check mark in front of it are marked as hidden.
 
