@@ -5,12 +5,19 @@
 		<key name="refresh-interval" type="u">
 			<default>300</default>
 			<summary>Number of seconds between refresh (default to 5min)</summary>
-			<description></description>
 			<range min="5" max="86400" />
 		</key>
 		<key name="refresh-menuitem" type="b">
 			<default>true</default>
 			<summary>Whether to display or not a menu item to refresh manually.</summary>
+		</key>
+		<key name="symbolic-icons" type="b">
+			<default>true</default>
+			<summary>When true use symbolic (black/white) versions of icons.</summary>
+		</key>
+		<key name="settings-menuitem" type="b">
+			<default>true</default>
+			<summary>Whether to add a settings menu item or not.</summary>
 		</key>
 		<key name="hidden-devices" type="as">
 			<default><![CDATA[[]]]></default>

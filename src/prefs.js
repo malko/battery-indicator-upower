@@ -31,6 +31,21 @@ function init(meta) {
 
 }
 
+const makeActionSwitchRow = ({title, subtitle, settingsProp}, gsettings) => {
+	const row = new Adw.ActionRow({title, subtitle})
+	const switchButton = new Gtk.Switch({valign: Gtk.Align.CENTER})
+	row.add_suffix(switchButton)
+	row.set_activatable_widget(switchButton)
+
+	gsettings.bind(
+		settingsProp,
+		switchButton,
+		'active',
+		Gio.SettingsBindFlags.DEFAULT
+	)
+	return row
+}
+
 /**
  * This function is called when the preferences window is first created to fill
  * the `Adw.PreferencesWindow`.
@@ -42,9 +57,6 @@ function init(meta) {
  */
 function fillPreferencesWindow(window) {
 	const settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.battery-indicator-upower')
-	const commonInputParams = {
-		valign: Gtk.Align.CENTER,
-	}
 	const prefsPage = new Adw.PreferencesPage({
 		name: 'general',
 		title: 'General',
@@ -59,7 +71,7 @@ function fillPreferencesWindow(window) {
 	prefsPage.add(prefsGroup)
 	//-- automatic refresh interval
 	const refreshIntervalEntry = new Gtk.SpinButton({
-		...commonInputParams,
+		valign: Gtk.Align.CENTER,
 		adjustment: new Gtk.Adjustment({
 			lower: 5,
 			upper: 86400,
@@ -82,19 +94,26 @@ function fillPreferencesWindow(window) {
 	refreshIntervalRow.add_suffix(refreshIntervalEntry)
 
 	//-- allow manual refresh
-	const refreshItemRow = new Adw.ActionRow({
+	const refreshItemRow = makeActionSwitchRow({
 		title: 'Allow manual refresh',
 		subtitle: 'Whether to add a menu item to manually refresh indicators info.',
-	})
+		settingsProp: 'refresh-menuitem'
+	}, settings)
 	prefsGroup.add(refreshItemRow)
-	const refreshItemSwitch = new Gtk.Switch(commonInputParams)
-	refreshItemRow.add_suffix(refreshItemSwitch)
-	refreshItemRow.set_activatable_widget(refreshItemSwitch)
 
-	settings.bind(
-		'refresh-menuitem',
-		refreshItemSwitch,
-		'active',
-		Gio.SettingsBindFlags.DEFAULT
-	)
+	//-- add a settings menu entry
+	const settingsItemRow = makeActionSwitchRow({
+		title: 'Quick settings access',
+		subtitle: 'Whether to add a settings menu item in popup menu or not.',
+		settingsProp: 'settings-menuitem'
+	}, settings)
+	prefsGroup.add(settingsItemRow)
+
+	//-- Prefer symbolic icons
+	const useSymbolicIconsRow = makeActionSwitchRow({
+		title: 'Use symbolic icons',
+		subtitle: 'Use black & white icons instead of colorfull icons.',
+		settingsProp: 'symbolic-icons'
+	}, settings)
+	prefsGroup.add(useSymbolicIconsRow)
 }

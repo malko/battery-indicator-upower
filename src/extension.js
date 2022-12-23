@@ -55,10 +55,12 @@ const spawnAsync = async (cmd) => new Promise((resolve, reject) => {
 				}
 			} catch (e) {
 				logError(e)
+				throw e
 			}
 		});
 	} catch (e) {
 		logError(e)
+		throw e
 	}
 })
 
@@ -94,17 +96,35 @@ const upowerParser = (output) => {
 
 	return items
 }
+const deviceTypeIcons = {
+	'gaming-input': 'input-gaming',
+	'mouse': 'input-mouse',
+	'touchpad': 'input-mouse',
+	'keyboard': 'input-keyboard',
+	'pda': 'pda',
+	'printer': 'printer',
+	'scanner': 'scanner',
+	'table': 'input-tablet',
+	'headset': 'audio-headset',
+	'headphones': 'audio-headphones',
+	'camera': 'camera-photo',
+	'video': 'video-display',
+	'monitor': 'video-display',
+	'speakers': 'audio-speakers',
+	'bluetooth-generic': 'bluetooth-active',
+	'audio-device': 'audio-x-generic'
+}
 /** return desired icon regarding upower */
-const getDeviceIcon = (device) => {
-	if (device.type === 'gaming-input')
-		return 'input-gaming-symbolic'
-	if (device.model?.match(/keyboard/i) || device.type === 'keyboard')
-		return 'input-keyboard-symbolic'
-	if (device.type==='mouse' || device.model?.match(/mouse/u))
-		return 'input-mouse-symbolic'
-	if (device.type==='tablet')
-		return 'input-tablet-symbolic'
-	return device.icon_name
+const getDeviceIcon = (device, useSymbolic) => {
+	const {type, model, icon_name} = device
+	const suffix = useSymbolic ? '-symbolic' : ''
+	if (model.match(/keyboard/i))
+		return deviceTypeIcons.keyboard + suffix
+	if (model.match(/mouse/i))
+		return deviceTypeIcons.mouse + suffix
+	if (type in deviceTypeIcons)
+		return deviceTypeIcons[type] + suffix
+	return useSymbolic ? icon_name : icon_name.replace(/-symbolic$/,'')
 }
 
 const makeMenuItem = (params) => {
@@ -115,7 +135,7 @@ const makeMenuItem = (params) => {
 	item.setOrnament(ornament) // hidden Ornament
 	onActivate && item.connect('activate', onActivate)
 	labelStyle && item.label.set_style(labelStyle)
-	secondaryIcon && item.insert_child_at_index(new St.Icon({
+	secondaryIcon && !icon.match(/^battery/) && item.insert_child_at_index(new St.Icon({
 		icon_name:secondaryIcon,
 		style_class:'popup-menu-icon'
 	}), 2)
@@ -154,7 +174,7 @@ const Indicator = GObject.registerClass( class Indicator extends PanelMenu.Butto
 		const container = this._indicatorsBoxLayout
 		const hiddenDevices = settingsManager.get('hidden-devices')
 			.filter((serial) => devices.find(d => d?.serial === serial) ? true : false)
-
+		const useSymbolic = settingsManager.get('symbolic-icons')
 		devices.length && devices.forEach((device, id) => {
 			const {serial, model, state} = device
 			const isHiddenDevice = hiddenDevices.includes(serial)
@@ -165,7 +185,7 @@ const Indicator = GObject.registerClass( class Indicator extends PanelMenu.Butto
 			const reliable = !device.percentage.match(/ignored/)
 			const percentage = parseInt(device.percentage, 10)+'%'
 			const charging = state==='charging'
-			const icon_name = getDeviceIcon(device)
+			const icon_name = getDeviceIcon(device, useSymbolic)
 			if (displayed) {
 				const icon = new St.Icon({
 					icon_name,
@@ -201,10 +221,12 @@ const Indicator = GObject.registerClass( class Indicator extends PanelMenu.Butto
 			this.menu.addMenuItem(menuItem)
 		})
 
+		settingsManager.get('refresh-menuitem') && this.addRefreshMenuItem()
+		settingsManager.get('settings-menuitem') && this.addSettingsMenuItem()
+
 		this._refreshTimeout = setTimeout(() => {
 			this.refreshIndicator()
 		}, (settingsManager.get("refresh-interval")||300) * 1000)
-		settingsManager.get('refresh-menuitem') && this.addRefreshMenuItem()
 	}
 
 	removeChilds() {
@@ -219,15 +241,22 @@ const Indicator = GObject.registerClass( class Indicator extends PanelMenu.Butto
 	}
 
 	addRefreshMenuItem() {
-		const refreshMenuItem = makeMenuItem({
+		this.menu.addMenuItem(makeMenuItem({
 			label: 'Refresh now',
 			icon: 'emblem-synchronizing-symbolic',
 			onActivate: () => {
 				clearTimeout(this._refreshTimeout)
 				this._refreshTimeout = setTimeout(() => this.refreshIndicator(), 500)
 			}
-		})
-		this.menu.addMenuItem(refreshMenuItem)
+		}))
+	}
+
+	addSettingsMenuItem() {
+		this.menu.addMenuItem(makeMenuItem({
+			label: 'Settings',
+			icon: 'preferences-other',
+			onActivate: () =>  ExtensionUtils.openPrefs?.()
+		}))
 	}
 
 });
@@ -235,7 +264,7 @@ const Indicator = GObject.registerClass( class Indicator extends PanelMenu.Butto
 class Extension {
 	constructor(uuid) {
 		this._uuid = uuid
-		ExtensionUtils.initTranslations(GETTEXT_DOMAIN)
+		// ExtensionUtils.initTranslations(GETTEXT_DOMAIN)
 	}
 
 	enable() {
