@@ -1,0 +1,71 @@
+# French translations for battery-indicator@jgotti.org.
+# Copyright (C) 2022 Jonathan Gotti
+# This file is distributed under the same license as the battery-indicator@jgotti.org package.
+# Jonathan Gotti <jgotti@jgotti.org>, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: battery-indicator@jgotti.org package\n"
+"Report-Msgid-Bugs-To: Jonathan Gotti\n"
+"POT-Creation-Date: 2022-12-23 13:18+0100\n"
+"PO-Revision-Date: 2022-12-23 13:36+0100\n"
+"Last-Translator: Jonathan Gotti <jgotti@jgotti.org>\n"
+"Language-Team: French - France <jgotti@jgotti.org>\n"
+"Language: fr_FR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"X-Generator: Gtranslator 41.0\n"
+
+#: extension.js:244
+msgid "Refresh now"
+msgstr "Rafraîchir maintenant"
+
+#: extension.js:255
+msgid "Settings"
+msgstr "Paramètres"
+
+#: prefs.js:63
+msgid "General"
+msgstr "Général"
+
+#: prefs.js:69
+msgid "Global Settings"
+msgstr "Paramètres Généraux"
+
+#: prefs.js:86
+msgid "Refresh interval"
+msgstr "Interval de rafraîchissement"
+
+#: prefs.js:87
+msgid "Number of seconds to wait before automatic refresh of info."
+msgstr ""
+"Nombre de secondes à attendre avant le prochain rafraîchissement automatique."
+
+#: prefs.js:99
+msgid "Allow manual refresh"
+msgstr "Autoriser le rafraîchissement manuel"
+
+#: prefs.js:100
+msgid "Whether to add a menu item to manually refresh indicators info."
+msgstr ""
+"Cela permet d'ajouter ou non une entrée de menu permettant de rafraîchir "
+"manuellement les informations de l'indicateur."
+
+#: prefs.js:107
+msgid "Quick settings access"
+msgstr "Accès rapide aux paramètres"
+
+#: prefs.js:108
+msgid "Whether to add a settings menu item in popup menu or not."
+msgstr ""
+"Cela permet d'ajouter ou non une entrée de menu pour accéder aux paramètres."
+
+#: prefs.js:115
+msgid "Use symbolic icons"
+msgstr "Utiliser les icônes symboliques"
+
+#: prefs.js:116
+msgid "Use black & white icons instead of colorfull icons."
+msgstr "Utiliser des icônes en noir et blanc au lieu d'icônes colorées."

@@ -16,18 +16,17 @@
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 /* exported init */
-const GETTEXT_DOMAIN = 'my-indicator-extension';
+const { GObject, St, Gio } = imports.gi
 
-const { GObject, St, Gio } = imports.gi;
-
-const ExtensionUtils = imports.misc.extensionUtils;
-const Main = imports.ui.main;
-const PanelMenu = imports.ui.panelMenu;
-const PopupMenu = imports.ui.popupMenu;
-const Me = ExtensionUtils.getCurrentExtension();
+const ExtensionUtils = imports.misc.extensionUtils
+const Main = imports.ui.main
+const PanelMenu = imports.ui.panelMenu
+const PopupMenu = imports.ui.popupMenu
+const Me = ExtensionUtils.getCurrentExtension()
 
 const {settingsDef} = Me.imports.settingsDef
 const SettingsManager = Me.imports.utils.SettingsManager
+const {gettext:_} = imports.gettext.domain(Me.metadata.uuid)
 
 let settingsManager
 
@@ -57,7 +56,7 @@ const spawnAsync = async (cmd) => new Promise((resolve, reject) => {
 				logError(e)
 				throw e
 			}
-		});
+		})
 	} catch (e) {
 		logError(e)
 		throw e
@@ -149,9 +148,9 @@ const Indicator = GObject.registerClass( class Indicator extends PanelMenu.Butto
 		this._indicatorsBoxLayout = new St.BoxLayout({style_class:'battery-indicator-boxlayout'})
 
 		// add a loading icon while initializing
-		this.add_child(this._indicatorsBoxLayout);
+		this.add_child(this._indicatorsBoxLayout)
 		this._indicatorsBoxLayout.add_child(new St.Icon({
-			icon_name: 'emblem-synchronizing',
+			icon_name: 'emblem-synchronizing-symbolic',
 			style_class: 'system-status-icon',
 		}))
 
@@ -242,7 +241,7 @@ const Indicator = GObject.registerClass( class Indicator extends PanelMenu.Butto
 
 	addRefreshMenuItem() {
 		this.menu.addMenuItem(makeMenuItem({
-			label: 'Refresh now',
+			label: _('Refresh now'),
 			icon: 'emblem-synchronizing-symbolic',
 			onActivate: () => {
 				clearTimeout(this._refreshTimeout)
@@ -253,18 +252,18 @@ const Indicator = GObject.registerClass( class Indicator extends PanelMenu.Butto
 
 	addSettingsMenuItem() {
 		this.menu.addMenuItem(makeMenuItem({
-			label: 'Settings',
+			label: _('Settings'),
 			icon: 'preferences-other',
 			onActivate: () =>  ExtensionUtils.openPrefs?.()
 		}))
 	}
 
-});
+})
 
 class Extension {
 	constructor(uuid) {
 		this._uuid = uuid
-		// ExtensionUtils.initTranslations(GETTEXT_DOMAIN)
+		ExtensionUtils.initTranslations(uuid)
 	}
 
 	enable() {
