@@ -1,0 +1,67 @@
+# Translations for battery-indicator@jgotti.org.
+# Copyright (C) 2022 Jonathan Gotti
+# This file is distributed under the same license as the battery-indicator@jgotti.org package.
+# Jonathan Gotti <jgotti@jgotti.org>, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: battery-indicator@jgotti.org package\n"
+"Report-Msgid-Bugs-To: Jonathan Gotti\n"
+"POT-Creation-Date: 2022-12-23 13:18+0100\n"
+"PO-Revision-Date: 2022-12-27 17:40+0100\n"
+"Last-Translator: Onno Giesmann <nutzer3105@gmail.com>\n"
+"Language-Team: French - France <jgotti@jgotti.org>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.2.2\n"
+
+#: extension.js:244
+msgid "Refresh now"
+msgstr "Jetzt aktualisieren"
+
+#: extension.js:255
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: prefs.js:63
+msgid "General"
+msgstr "Allgemein"
+
+#: prefs.js:69
+msgid "Global Settings"
+msgstr "Globale Einstellungen"
+
+#: prefs.js:86
+msgid "Refresh interval"
+msgstr "Aktualisierungsintervall"
+
+#: prefs.js:87
+msgid "Number of seconds to wait before automatic refresh of info."
+msgstr "Anzahl an Sekunden, bevor Infos automatisch aktualisiert werden."
+
+#: prefs.js:99
+msgid "Allow manual refresh"
+msgstr "Manuelles Aktualisieren erlauben"
+
+#: prefs.js:100
+msgid "Whether to add a menu item to manually refresh indicators info."
+msgstr "Ermöglicht das manuelle Aktualisieren der Indikator-Info über einen Menüeintrag."
+
+#: prefs.js:107
+msgid "Quick settings access"
+msgstr "Schnellzugriff auf Einstellungen"
+
+#: prefs.js:108
+msgid "Whether to add a settings menu item in popup menu or not."
+msgstr "Auswahl, ob der Menüeintrag Einstellungen angezeigt werden soll."
+
+#: prefs.js:115
+msgid "Use symbolic icons"
+msgstr "Stilisierte Symbole verwenden"
+
+#: prefs.js:116
+msgid "Use black & white icons instead of colorfull icons."
+msgstr "Schwarz-weiße Symbole verwenden anstatt der farbigen Symbole."
