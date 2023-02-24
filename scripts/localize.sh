@@ -3,7 +3,7 @@ EXTENSION_NAME="battery-indicator@jgotti.org"
 PROJECT_DIR=$(dirname -- $(dirname -- "${BASH_SOURCE[0]}"))
 SRC_DIR="$PROJECT_DIR/src"
 PO_DIR="$PROJECT_DIR/po"
-LANGS=("en" "fr")
+LANGS=("en" "fr" "ar" "de")
 
 echo "Starting localization"
 echo "removing old translations"
