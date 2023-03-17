@@ -121,6 +121,8 @@ const getDeviceIcon = (device, useSymbolic) => {
 		return deviceTypeIcons.keyboard + suffix
 	if (model.match(/mouse/i))
 		return deviceTypeIcons.mouse + suffix
+	if (model.match(/Sony PLAYSTATION\(R\)3 Controller Motion Sensors/i))
+	        return deviceTypeIcons['gaming-input'] + suffix
 	if (type in deviceTypeIcons)
 		return deviceTypeIcons[type] + suffix
 	return useSymbolic ? icon_name : icon_name.replace(/-symbolic$/,'')
