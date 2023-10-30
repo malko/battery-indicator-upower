@@ -15,22 +15,12 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
-const {Adw, GLib, Gtk, Gio} = imports.gi
+import Adw from 'gi://Adw'
+import Gtk from 'gi://Gtk'
+import Gio from 'gi://Gio'
 
 // It's common practice to keep GNOME API and JS imports in separate blocks
-const ExtensionUtils = imports.misc.extensionUtils
-const Me = ExtensionUtils.getCurrentExtension()
-const {gettext:_} = imports.gettext.domain(Me.metadata.uuid)
-
-
-/**
- * Like `extension.js` this is used for any one-time setup like translations.
- *
- * @param {ExtensionMeta} meta - An extension meta object, described below.
- */
-function init(meta) {
-	ExtensionUtils.initTranslations(Me.metadata.uuid)
-}
+import {ExtensionPreferences, gettext as _} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
 const makeActionSwitchRow = ({title, subtitle, settingsProp}, gsettings) => {
 	const row = new Adw.ActionRow({title, subtitle})
@@ -47,6 +37,12 @@ const makeActionSwitchRow = ({title, subtitle, settingsProp}, gsettings) => {
 	return row
 }
 
+export default class MyExtensionPreferences extends ExtensionPreferences {
+	constructor(metadata) {
+        super(metadata);
+
+        this.initTranslations(metadata.uuid);
+    }
 /**
  * This function is called when the preferences window is first created to fill
  * the `Adw.PreferencesWindow`.
@@ -56,20 +52,23 @@ const makeActionSwitchRow = ({title, subtitle, settingsProp}, gsettings) => {
  *
  * @param {Adw.PreferencesWindow} window - The preferences window
  */
-function fillPreferencesWindow(window) {
-	const settings = ExtensionUtils.getSettings('org.gnome.shell.extensions.battery-indicator-upower')
+fillPreferencesWindow(window) {
+	window._settings = this.getSettings();
+	const settings = this.getSettings();
 	const prefsPage = new Adw.PreferencesPage({
 		name: 'general',
 		title: _('General'),
 		icon_name: 'preferences-other-symbolic',
 	})
-	window.add(prefsPage)
 
 	const prefsGroup = new Adw.PreferencesGroup({
 		title: _('Global Settings'),
 		// description: `Configure ${Me.metadata.name} behaviour`,
 	})
 	prefsPage.add(prefsGroup)
+
+	window.add(prefsPage)
+
 	//-- automatic refresh interval
 	const refreshIntervalEntry = new Gtk.SpinButton({
 		valign: Gtk.Align.CENTER,
@@ -117,4 +116,5 @@ function fillPreferencesWindow(window) {
 		settingsProp: 'symbolic-icons'
 	}, settings)
 	prefsGroup.add(useSymbolicIconsRow)
+}
 }
