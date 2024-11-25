@@ -87,8 +87,8 @@ class SettingsManagerClass {
 	/**
 	 * if prop is ommitted then observe any settings change
 	 * return a function to stop observing
-	 * @param {*} prop
-	 * @param {*} handler
+	 * @param {string|Function} prop
+	 * @param {Function} [handler]
 	 * @returns
 	 */
 	addChangeObserver(prop, handler) {

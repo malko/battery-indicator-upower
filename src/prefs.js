@@ -38,11 +38,6 @@ const makeActionSwitchRow = ({title, subtitle, settingsProp}, gsettings) => {
 }
 
 export default class MyExtensionPreferences extends ExtensionPreferences {
-	constructor(metadata) {
-        super(metadata);
-
-        this.initTranslations(metadata.uuid);
-    }
 /**
  * This function is called when the preferences window is first created to fill
  * the `Adw.PreferencesWindow`.

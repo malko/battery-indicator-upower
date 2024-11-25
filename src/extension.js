@@ -123,7 +123,7 @@ const getDeviceIcon = (device, useSymbolic) => {
 	if (model.match(/mouse/i))
 		return deviceTypeIcons.mouse + suffix
 	if (model.match(/Sony PLAYSTATION\(R\)3 Controller Motion Sensors/i))
-	        return deviceTypeIcons['gaming-input'] + suffix
+		return deviceTypeIcons['gaming-input'] + suffix
 	if (type in deviceTypeIcons)
 		return deviceTypeIcons[type] + suffix
 	return useSymbolic ? icon_name : icon_name.replace(/-symbolic$/,'')
@@ -270,9 +270,8 @@ const Indicator = GObject.registerClass( class Indicator extends PanelMenu.Butto
 
 export default class BatteryExtension extends Extension {
 	constructor(metadata) {
-        super(metadata);
+		super(metadata);
 		this._uuid = metadata.uuid
-		this.initTranslations(metadata.uuid)
 	}
 
 	enable() {
