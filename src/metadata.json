@@ -6,6 +6,6 @@
   "url":"https://github.com/malko/battery-indicator-upower",
   "gettext-domain": "battery-indicator@jgotti.org",
   "shell-version": [
-    "45"
+    "45", "46"
   ]
 }
