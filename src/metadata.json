@@ -4,7 +4,8 @@
   "uuid": "battery-indicator@jgotti.org",
   "settings-schema": "org.gnome.shell.extensions.battery-indicator-upower",
   "url":"https://github.com/malko/battery-indicator-upower",
+  "gettext-domain": "battery-indicator@jgotti.org",
   "shell-version": [
-    "42", "43"
+    "45", "46"
   ]
 }

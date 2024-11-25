@@ -16,17 +16,18 @@
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
 /* exported init */
-const { GObject, St, Gio } = imports.gi
+import GObject from 'gi://GObject'
+import St from 'gi://St'
+import Gio from 'gi://Gio'
+import Clutter from 'gi://Clutter'
 
-const ExtensionUtils = imports.misc.extensionUtils
-const Main = imports.ui.main
-const PanelMenu = imports.ui.panelMenu
-const PopupMenu = imports.ui.popupMenu
-const Me = ExtensionUtils.getCurrentExtension()
+import * as Main from 'resource:///org/gnome/shell/ui/main.js';
+import * as PanelMenu from 'resource:///org/gnome/shell/ui/panelMenu.js';
+import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
 
-const {settingsDef} = Me.imports.settingsDef
-const SettingsManager = Me.imports.utils.SettingsManager
-const {gettext:_} = imports.gettext.domain(Me.metadata.uuid)
+import { settingsDef } from './settingsDef.js';
+import * as SettingsManager from './utils/SettingsManager.js';
+import {Extension, gettext as _} from 'resource:///org/gnome/shell/extensions/extension.js';
 
 let settingsManager
 
@@ -122,7 +123,7 @@ const getDeviceIcon = (device, useSymbolic) => {
 	if (model.match(/mouse/i))
 		return deviceTypeIcons.mouse + suffix
 	if (model.match(/Sony PLAYSTATION\(R\)3 Controller Motion Sensors/i))
-	        return deviceTypeIcons['gaming-input'] + suffix
+		return deviceTypeIcons['gaming-input'] + suffix
 	if (type in deviceTypeIcons)
 		return deviceTypeIcons[type] + suffix
 	return useSymbolic ? icon_name : icon_name.replace(/-symbolic$/,'')
@@ -144,6 +145,11 @@ const makeMenuItem = (params) => {
 }
 
 const Indicator = GObject.registerClass( class Indicator extends PanelMenu.Button {
+	constructor(extension) {
+		super()
+		this._extension = extension
+	}
+
 	_init() {
 		super._init(0.0, 'Battery indicator')
 
@@ -201,7 +207,7 @@ const Indicator = GObject.registerClass( class Indicator extends PanelMenu.Butto
 					text: percentage,
 					style_class: 'battery-indicator-label',
 					style: (charging ? 'color:yellow;' : '') + (reliable ? '' : 'font-style:italic;'),
-					y_align: St.Align.END
+					y_align: Clutter.ActorAlign.CENTER
 				})
 				container.add_child(icon)
 				container.add_child(label)
@@ -256,26 +262,26 @@ const Indicator = GObject.registerClass( class Indicator extends PanelMenu.Butto
 		this.menu.addMenuItem(makeMenuItem({
 			label: _('Settings'),
 			icon: 'preferences-other',
-			onActivate: () =>  ExtensionUtils.openPrefs?.()
+			onActivate: () =>  this._extension.openPreferences?.()
 		}))
 	}
 
 })
 
-class Extension {
-	constructor(uuid) {
-		this._uuid = uuid
-		ExtensionUtils.initTranslations(uuid)
+export default class BatteryExtension extends Extension {
+	constructor(metadata) {
+		super(metadata);
+		this._uuid = metadata.uuid
 	}
 
 	enable() {
-		const indicator = new Indicator()
+		const indicator = new Indicator(this)
 		this._indicator = indicator
 		settingsManager = SettingsManager.init(
 			'org.gnome.shell.extensions.battery-indicator-upower',
 			settingsDef
 		)._startListening()
-		indicator.refreshIndicator()
+		indicator.refreshIndicator().catch(e => { logError(e, 'refresh in enable')})
 		this._settingObserver = settingsManager.addChangeObserver(() => {
 			indicator.refreshIndicator()
 		})
@@ -296,5 +302,5 @@ class Extension {
 }
 
 function init(meta) {
-	return new Extension(meta.uuid)
+	return new BatteryExtension(meta.uuid)
 }
