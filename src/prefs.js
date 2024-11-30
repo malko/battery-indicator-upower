@@ -37,7 +37,7 @@ const makeActionSwitchRow = ({title, subtitle, settingsProp}, gsettings) => {
 	return row
 }
 
-export default class MyExtensionPreferences extends ExtensionPreferences {
+export default class BatteryUpowerExtensionPreferences extends ExtensionPreferences {
 /**
  * This function is called when the preferences window is first created to fill
  * the `Adw.PreferencesWindow`.

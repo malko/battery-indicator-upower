@@ -266,6 +266,11 @@ const Indicator = GObject.registerClass( class Indicator extends PanelMenu.Butto
 		}))
 	}
 
+	destroy() {
+		this._refreshTimeout && clearTimeout(this._refreshTimeout)
+		super.destroy()
+	}
+
 })
 
 export default class BatteryExtension extends Extension {
@@ -278,6 +283,7 @@ export default class BatteryExtension extends Extension {
 		const indicator = new Indicator(this)
 		this._indicator = indicator
 		settingsManager = SettingsManager.init(
+			this,
 			'org.gnome.shell.extensions.battery-indicator-upower',
 			settingsDef
 		)._startListening()
@@ -294,13 +300,9 @@ export default class BatteryExtension extends Extension {
 			this._settingObserver = null
 		}
 		this._indicator?.destroy()
-		settingsManager = settingsManager.destroy()
-		clearTimeout(this._indicator?._refreshTimeout)
+		settingsManager.destroy()
 		this._indicator = null
+		settingsManager = null
 	}
 
-}
-
-function init(meta) {
-	return new BatteryExtension(meta.uuid)
 }

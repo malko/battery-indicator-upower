@@ -15,10 +15,9 @@
  *
  * SPDX-License-Identifier: GPL-2.0-or-later
  */
-import {Extension} from 'resource:///org/gnome/shell/extensions/extension.js';
 
 class SettingsManagerClass {
-	constructor(settingId, settingsDef) {
+	constructor(ExtensionInstance, settingId, settingsDef) {
 		// main listener
 		this._observer = null
 		// user regisetered listeners
@@ -28,7 +27,7 @@ class SettingsManagerClass {
 			def[cur.key] = cur
 			return def
 		}, {})
-		this._gsettings = Extension.lookupByUUID('battery-indicator@jgotti.org').getSettings(settingId)
+		this._gsettings = ExtensionInstance.getSettings(settingId)
 	}
 
 	_startListening() {
@@ -106,4 +105,4 @@ class SettingsManagerClass {
 	}
 }
 
-export var init = (...args) => new SettingsManagerClass(...args)
+export const init = (...args) => new SettingsManagerClass(...args)
