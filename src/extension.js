@@ -27,7 +27,7 @@ import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
 
 import { settingsDef } from './settingsDef.js';
 import * as SettingsManager from './utils/SettingsManager.js';
-import {Extension, gettext as _} from 'resource:///org/gnome/shell/extensions/extension.js';
+import { Extension, gettext as _ } from 'resource:///org/gnome/shell/extensions/extension.js';
 
 let settingsManager
 
@@ -75,10 +75,10 @@ const upowerParser = (output) => {
 			const lines = deviceStr.split('\n').map(line => {
 				const groups = line.match(/^\s*(?<prop>[^:]+):\s*(?<val>.*)$/)?.groups
 				if (!groups)
-					return {prop: 'type', val:line.trim()}
-				let {prop, val} = groups
+					return { prop: 'type', val: line.trim() }
+				let { prop, val } = groups
 				prop = prop.replace(/[\s-]/g, '_')
-				switch(prop) {
+				switch (prop) {
 					// case 'percentage':
 					// 	val = parseInt(val, 10)
 					// 	break
@@ -86,12 +86,12 @@ const upowerParser = (output) => {
 						val = val.replace(/'([^']+)'/, '$1')
 						break
 					default:
-						val = val==='no' ? false : val ==='yes' ? true : val
+						val = val === 'no' ? false : val === 'yes' ? true : val
 						break
 				}
-				return {prop, val}
+				return { prop, val }
 			})
-			return lines.reduce((acc,cur) => {acc[cur.prop] = cur.val; return acc}, {})
+			return lines.reduce((acc, cur) => { acc[cur.prop] = cur.val; return acc }, {})
 		})
 
 	return items
@@ -116,7 +116,7 @@ const deviceTypeIcons = {
 }
 /** return desired icon regarding upower */
 const getDeviceIcon = (device, useSymbolic) => {
-	const {type, model, icon_name} = device
+	const { type, model, icon_name } = device
 	const suffix = useSymbolic ? '-symbolic' : ''
 	if (model.match(/keyboard/i))
 		return deviceTypeIcons.keyboard + suffix
@@ -126,25 +126,25 @@ const getDeviceIcon = (device, useSymbolic) => {
 		return deviceTypeIcons['gaming-input'] + suffix
 	if (type in deviceTypeIcons)
 		return deviceTypeIcons[type] + suffix
-	return useSymbolic ? icon_name : icon_name.replace(/-symbolic$/,'')
+	return useSymbolic ? icon_name : icon_name.replace(/-symbolic$/, '')
 }
 
 const makeMenuItem = (params) => {
-	const {label, icon, secondaryIcon, onActivate, ornament = Ornament.HIDDEN, labelStyle, ..._params} = params || {}
+	const { label, icon, secondaryIcon, onActivate, ornament = Ornament.HIDDEN, labelStyle, ..._params } = params || {}
 	const item = icon
-		? new PopupMenu.PopupImageMenuItem(label, icon, _params||undefined)
-		: new PopupMenu.PopupMenuItem(label, _params||undefined)
+		? new PopupMenu.PopupImageMenuItem(label, icon, _params || undefined)
+		: new PopupMenu.PopupMenuItem(label, _params || undefined)
 	item.setOrnament(ornament) // hidden Ornament
 	onActivate && item.connect('activate', onActivate)
 	labelStyle && item.label.set_style(labelStyle)
 	secondaryIcon && !icon.match(/^battery/) && item.insert_child_at_index(new St.Icon({
-		icon_name:secondaryIcon,
-		style_class:'popup-menu-icon'
+		icon_name: secondaryIcon,
+		style_class: 'popup-menu-icon'
 	}), 2)
 	return item
 }
 
-const Indicator = GObject.registerClass( class Indicator extends PanelMenu.Button {
+const Indicator = GObject.registerClass(class Indicator extends PanelMenu.Button {
 	constructor(extension) {
 		super()
 		this._extension = extension
@@ -153,7 +153,7 @@ const Indicator = GObject.registerClass( class Indicator extends PanelMenu.Butto
 	_init() {
 		super._init(0.0, 'Battery indicator')
 
-		this._indicatorsBoxLayout = new St.BoxLayout({style_class:'battery-indicator-boxlayout'})
+		this._indicatorsBoxLayout = new St.BoxLayout({ style_class: 'battery-indicator-boxlayout' })
 
 		// add a loading icon while initializing
 		this.add_child(this._indicatorsBoxLayout)
@@ -169,14 +169,14 @@ const Indicator = GObject.registerClass( class Indicator extends PanelMenu.Butto
 	async refreshIndicator() {
 		// clear previous refresh timer
 		this._refreshTimeout && clearTimeout(this._refreshTimeout)
-		
+
 		// get fresh datas
 		let stdout
 		try {
 			stdout = await spawnAsync(['upower', '-d'])
 		} catch (e) {
 			e instanceof Uint8Array && (e = BiteArray.toString(e))
-			logError('Error:',e)
+			logError('Error:', e)
 			throw new Error(e)
 		}
 		const devices = upowerParser(stdout)
@@ -194,7 +194,7 @@ const Indicator = GObject.registerClass( class Indicator extends PanelMenu.Butto
 		}
 
 		displayedDevices.length && this.addDevicesIndicatorItems(displayedDevices)
-		
+
 		// refresh menu items
 		this.addDevicesMenuItems(devices)
 		this.addCommonMenuItems()
@@ -202,13 +202,13 @@ const Indicator = GObject.registerClass( class Indicator extends PanelMenu.Butto
 		// restart refresh timer
 		this._refreshTimeout = setTimeout(() => {
 			this.refreshIndicator()
-		}, (settingsManager.get("refresh-interval")||300) * 1000)
+		}, (settingsManager.get("refresh-interval") || 300) * 1000)
 	}
 
 	removeChilds() {
 		const container = this._indicatorsBoxLayout
 		let child = container.get_first_child()
-		while(child) {
+		while (child) {
 			container.remove_child(child)
 			child.destroy()
 			child = container.get_first_child()
@@ -221,17 +221,16 @@ const Indicator = GObject.registerClass( class Indicator extends PanelMenu.Butto
 		const container = this._indicatorsBoxLayout
 		devices.length && devices.forEach((device, id) => {
 			const icon_name = getDeviceIcon(device, useSymbolic)
-			const colorStyle = device.state==='charging' ? 'color:yellow;' : ''
+			const colorStyle = device.state === 'charging' ? 'color:yellow;' : ''
 			const fontStyle = device.percentage.match(/ignored/) ? 'font-style:italic;' : ''
 			const icon = new St.Icon({
 				icon_name,
 				style_class: 'system-status-icon',
-				style: `margin-right:0;${colorStyle}${
-					id ? '' : 'margin-left:0px;' // remove margin-left for first Icon
-				}`
+				style: `margin-right:0;${colorStyle}${id ? '' : 'margin-left:0px;' // remove margin-left for first Icon
+					}`
 			})
 			const label = new St.Label({
-				text: parseInt(device.percentage, 10)+'%',
+				text: parseInt(device.percentage, 10) + '%',
 				style_class: 'battery-indicator-label',
 				style: `${colorStyle}${fontStyle}`,
 				y_align: Clutter.ActorAlign.CENTER
@@ -245,17 +244,17 @@ const Indicator = GObject.registerClass( class Indicator extends PanelMenu.Butto
 		const useSymbolic = settingsManager.get('symbolic-icons')
 		const hiddenDevices = settingsManager.get('hidden-devices')
 		devices.length && devices.forEach((device, id) => {
-			const {serial, model, state} = device
+			const { serial, model, state } = device
 			const isHiddenDevice = hiddenDevices.includes(serial)
 			const menuItem = makeMenuItem({
-				label: `${model} (${state||'unknown'}) ${parseInt(device.percentage, 10)+'%'}`,
+				label: `${model} (${state || 'unknown'}) ${parseInt(device.percentage, 10) + '%'}`,
 				icon: getDeviceIcon(device, useSymbolic),
 				secondaryIcon: device.icon_name,
 				labelStyle: device.percentage.match(/ignored/) ? 'font-style:italic;' : '',
 				ornament: Ornament[isHiddenDevice ? 'NONE' : 'CHECK']
 				,
 				onActivate: () => {
-					const hiddenDevices = settingsManager.get('hidden-devices').filter(s => s!==serial)
+					const hiddenDevices = settingsManager.get('hidden-devices').filter(s => s !== serial)
 					isHiddenDevice || hiddenDevices.push(serial)
 					settingsManager.set('hidden-devices', hiddenDevices)
 				}
@@ -284,7 +283,7 @@ const Indicator = GObject.registerClass( class Indicator extends PanelMenu.Butto
 		this.menu.addMenuItem(makeMenuItem({
 			label: _('Settings'),
 			icon: 'preferences-other',
-			onActivate: () =>  this._extension.openPreferences?.()
+			onActivate: () => this._extension.openPreferences?.()
 		}))
 	}
 
@@ -309,7 +308,7 @@ export default class BatteryExtension extends Extension {
 			'org.gnome.shell.extensions.battery-indicator-upower',
 			settingsDef
 		)._startListening()
-		indicator.refreshIndicator().catch(e => { logError(e, 'refresh in enable')})
+		indicator.refreshIndicator().catch(e => { logError(e, 'refresh in enable') })
 		this._settingObserver = settingsManager.addChangeObserver(() => {
 			indicator.refreshIndicator()
 		})
@@ -317,7 +316,7 @@ export default class BatteryExtension extends Extension {
 	}
 
 	disable() {
-		if (this._settingObserver){
+		if (this._settingObserver) {
 			this._settingObserver?.()
 			this._settingObserver = null
 		}
