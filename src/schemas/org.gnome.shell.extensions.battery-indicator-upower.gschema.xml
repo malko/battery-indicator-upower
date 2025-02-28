@@ -19,6 +19,10 @@
 			<default>true</default>
 			<summary>Whether to add a settings menu item or not.</summary>
 		</key>
+		<key name="hideempty-menuitem" type="b">
+			<default>false</default>
+			<summary>Whether to hide indicator when no device to display.</summary>
+		</key>
 		<key name="hidden-devices" type="as">
 			<default><![CDATA[[]]]></default>
 			<summary>List of device identifier to hide from the indicator (still showed in the menu)</summary>
