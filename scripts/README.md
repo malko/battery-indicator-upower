@@ -1,8 +1,9 @@
 # Script utilities to assist in the development of the extension
 
 ## Build Scripts
-- `build.sh` - Builds the extension by creating a zip file in the dist directory after running localization
+- `build.sh` - Builds the extension by creating a zip file in the dist directory (use localize.sh and compileSchema.sh)
 - `localize.sh` - Compiles translation files from po directory into the src/locale directory
+- `compileSchema.sh` - Compiles GSchema XML files into binary format for extension settings
 
 ## Development Scripts
 - `updatePot.sh` - Update the pot and po files with new strings
