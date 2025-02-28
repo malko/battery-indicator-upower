@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: battery-indicator@jgotti.org package\n"
-"Report-Msgid-Bugs-To: Jonathan Gotti\n"
-"POT-Creation-Date: 2022-12-23 13:18+0100\n"
+"Report-Msgid-Bugs-To: Jonathan Gotti <jgotti@jgotti.org>\n"
+"POT-Creation-Date: 2025-02-28 16:27+0100\n"
 "PO-Revision-Date: 2023-04-30 18:19+0200\n"
 "Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
 "Language-Team: French - France <jgotti@jgotti.org>\n"
@@ -18,50 +18,59 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 3.2.2\n"
 
-#: extension.js:244
+#: src/extension.js:276
 msgid "Refresh now"
 msgstr "Nu vernieuwen"
 
-#: extension.js:255
+#: src/extension.js:287
 msgid "Settings"
 msgstr "Voorkeuren"
 
-#: prefs.js:63
+#: src/prefs.js:55
 msgid "General"
 msgstr "Algemeen"
 
-#: prefs.js:69
+#: src/prefs.js:60
 msgid "Global Settings"
 msgstr "Algemene voorkeuren"
 
-#: prefs.js:86
+#: src/prefs.js:80
 msgid "Refresh interval"
 msgstr "Vernieuwen, elke"
 
-#: prefs.js:87
+#: src/prefs.js:81
 msgid "Number of seconds to wait before automatic refresh of info."
-msgstr "Het aantal seconden tussen het automatisch vernieuwen van de informatie."
+msgstr ""
+"Het aantal seconden tussen het automatisch vernieuwen van de informatie."
 
-#: prefs.js:99
+#: src/prefs.js:93
 msgid "Allow manual refresh"
 msgstr "Handmatig vernieuwen tonen"
 
-#: prefs.js:100
+#: src/prefs.js:94
 msgid "Whether to add a menu item to manually refresh indicators info."
 msgstr "Toon een menu-item om de informatie handmatig te vernieuwen."
 
-#: prefs.js:107
+#: src/prefs.js:101
 msgid "Quick settings access"
 msgstr "Snelle voorkeuren tonen"
 
-#: prefs.js:108
+#: src/prefs.js:102
 msgid "Whether to add a settings menu item in popup menu or not."
 msgstr "Toon een menu-item naar de snelle voorkeuren in het uitbreidingenmenu."
 
-#: prefs.js:115
+#: src/prefs.js:109
+msgid "Hide empty indicator"
+msgstr "Lege indicator verbergen"
+
+#: src/prefs.js:110
+msgid "Whether to hide indicator when no device to display."
+msgstr "Verberg de indicator wanneer er geen apparaat is om weer te geven"
+
+#: src/prefs.js:117
 msgid "Use symbolic icons"
 msgstr "Symbolische pictogrammen gebruiken"
 
-#: prefs.js:116
+#: src/prefs.js:118
 msgid "Use black & white icons instead of colorfull icons."
 msgstr "Toon zwart-witpictogrammen in plaats van gekleurde."

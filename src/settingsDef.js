@@ -2,6 +2,8 @@ export const settingsDef = [
 	{key: 'refresh-interval', type: 'uint', dflt: 300},
 	{key: 'refresh-menuitem', type: 'boolean', dflt: true},
 	{key: 'settings-menuitem', type: 'boolean', dflt: true},
+	{key: 'hideempty-menuitem', type: 'boolean', dflt: false},
+	{key: 'show-empty', type: 'boolean', dflt: true},
 	{key: 'symbolic-icons', type: 'boolean', dflt: true},
 	{key: 'hidden-devices', type: 'strv', dflt: []}
 ]

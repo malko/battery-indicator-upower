@@ -167,7 +167,10 @@ const Indicator = GObject.registerClass( class Indicator extends PanelMenu.Butto
 	}
 
 	async refreshIndicator() {
+		// clear previous refresh timer
 		this._refreshTimeout && clearTimeout(this._refreshTimeout)
+		
+		// get fresh datas
 		let stdout
 		try {
 			stdout = await spawnAsync(['upower', '-d'])
@@ -177,60 +180,26 @@ const Indicator = GObject.registerClass( class Indicator extends PanelMenu.Butto
 			throw new Error(e)
 		}
 		const devices = upowerParser(stdout)
+
+		// update display
 		this.removeChilds()
-		const container = this._indicatorsBoxLayout
+		const hideEmpty = settingsManager.get('hideempty-menuitem')
 		const hiddenDevices = settingsManager.get('hidden-devices')
 			.filter((serial) => devices.find(d => d?.serial === serial) ? true : false)
-		const useSymbolic = settingsManager.get('symbolic-icons')
-		devices.length && devices.forEach((device, id) => {
-			const {serial, model, state} = device
-			const isHiddenDevice = hiddenDevices.includes(serial)
-			let displayed = !isHiddenDevice
-			if (id===0 && devices.length === hiddenDevices.length) {
-				displayed = true // ensure one device is still visible
-			}
-			const reliable = !device.percentage.match(/ignored/)
-			const percentage = parseInt(device.percentage, 10)+'%'
-			const charging = state==='charging'
-			const icon_name = getDeviceIcon(device, useSymbolic)
-			if (displayed) {
-				const icon = new St.Icon({
-					icon_name,
-					style_class: 'system-status-icon',
-					style: `margin-right:0;${
-						id ? '' : 'margin-left:0px;' // remove margin for first Icon
-					}${
-						charging ? 'color:yellow;' : ''
-					}`
-				})
-				const label = new St.Label({
-					text: percentage,
-					style_class: 'battery-indicator-label',
-					style: (charging ? 'color:yellow;' : '') + (reliable ? '' : 'font-style:italic;'),
-					y_align: Clutter.ActorAlign.CENTER
-				})
-				container.add_child(icon)
-				container.add_child(label)
-			}
-			const menuItem = makeMenuItem({
-				label: `${model} (${state||'unknown'}) ${percentage}`,
-				icon: icon_name,
-				secondaryIcon: device.icon_name,
-				labelStyle: reliable ? '' : 'font-style:italic;',
-				ornament: Ornament[isHiddenDevice ? 'NONE' : 'CHECK']
-				,
-				onActivate: () => {
-					const hiddenDevices = settingsManager.get('hidden-devices').filter(s => s!==serial)
-					isHiddenDevice || hiddenDevices.push(serial)
-					settingsManager.set('hidden-devices', hiddenDevices)
-				}
-			})
-			this.menu.addMenuItem(menuItem)
-		})
+		const displayedDevices = devices.filter(d => !hiddenDevices.includes(d.serial))
 
-		settingsManager.get('refresh-menuitem') && this.addRefreshMenuItem()
-		settingsManager.get('settings-menuitem') && this.addSettingsMenuItem()
+		// ensure at least one device is displayed if not set to hide empty
+		if (!displayedDevices.length && !hideEmpty) {
+			displayedDevices.push(devices[0])
+		}
 
+		displayedDevices.length && this.addDevicesIndicatorItems(displayedDevices)
+		
+		// refresh menu items
+		this.addDevicesMenuItems(devices)
+		this.addCommonMenuItems()
+
+		// restart refresh timer
 		this._refreshTimeout = setTimeout(() => {
 			this.refreshIndicator()
 		}, (settingsManager.get("refresh-interval")||300) * 1000)
@@ -245,6 +214,61 @@ const Indicator = GObject.registerClass( class Indicator extends PanelMenu.Butto
 			child = container.get_first_child()
 		}
 		this.menu.removeAll()
+	}
+
+	addDevicesIndicatorItems(devices) {
+		const useSymbolic = settingsManager.get('symbolic-icons')
+		const container = this._indicatorsBoxLayout
+		devices.length && devices.forEach((device, id) => {
+			const icon_name = getDeviceIcon(device, useSymbolic)
+			const colorStyle = device.state==='charging' ? 'color:yellow;' : ''
+			const fontStyle = device.percentage.match(/ignored/) ? 'font-style:italic;' : ''
+			if (displayed) {
+				const icon = new St.Icon({
+					icon_name,
+					style_class: 'system-status-icon',
+					style: `margin-right:0;${colorStyle}${
+						id ? '' : 'margin-left:0px;' // remove margin-left for first Icon
+					}`
+				})
+				const label = new St.Label({
+					text: parseInt(device.percentage, 10)+'%',
+					style_class: 'battery-indicator-label',
+					style: `${colorStyle}${fontStyle}`,
+					y_align: Clutter.ActorAlign.CENTER
+				})
+				container.add_child(icon)
+				container.add_child(label)
+			}
+		})
+	}
+
+	addDevicesMenuItems(devices) {
+		const useSymbolic = settingsManager.get('symbolic-icons')
+		const hiddenDevices = settingsManager.get('hidden-devices')
+		devices.length && devices.forEach((device, id) => {
+			const {serial, model, state} = device
+			const isHiddenDevice = hiddenDevices.includes(serial)
+			const menuItem = makeMenuItem({
+				label: `${model} (${state||'unknown'}) ${parseInt(device.percentage, 10)+'%'}`,
+				icon: getDeviceIcon(device, useSymbolic),
+				secondaryIcon: device.icon_name,
+				labelStyle: device.percentage.match(/ignored/) ? 'font-style:italic;' : '',
+				ornament: Ornament[isHiddenDevice ? 'NONE' : 'CHECK']
+				,
+				onActivate: () => {
+					const hiddenDevices = settingsManager.get('hidden-devices').filter(s => s!==serial)
+					isHiddenDevice || hiddenDevices.push(serial)
+					settingsManager.set('hidden-devices', hiddenDevices)
+				}
+			})
+			this.menu.addMenuItem(menuItem)
+		})
+	}
+
+	addCommonMenuItems() {
+		settingsManager.get('refresh-menuitem') && this.addRefreshMenuItem()
+		settingsManager.get('settings-menuitem') && this.addSettingsMenuItem()
 	}
 
 	addRefreshMenuItem() {

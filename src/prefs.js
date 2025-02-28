@@ -103,6 +103,14 @@ fillPreferencesWindow(window) {
 		settingsProp: 'settings-menuitem'
 	}, settings)
 	prefsGroup.add(settingsItemRow)
+	
+	//-- add a settings menu entry
+	const hideWhenEmptyRow = makeActionSwitchRow({
+		title: _('Hide empty indicator'),
+		subtitle: _('Whether to hide indicator when no device to display.'),
+		settingsProp: 'hideempty-menuitem'
+	}, settings)
+	prefsGroup.add(hideWhenEmptyRow)
 
 	//-- Prefer symbolic icons
 	const useSymbolicIconsRow = makeActionSwitchRow({
