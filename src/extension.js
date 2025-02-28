@@ -223,23 +223,21 @@ const Indicator = GObject.registerClass( class Indicator extends PanelMenu.Butto
 			const icon_name = getDeviceIcon(device, useSymbolic)
 			const colorStyle = device.state==='charging' ? 'color:yellow;' : ''
 			const fontStyle = device.percentage.match(/ignored/) ? 'font-style:italic;' : ''
-			if (displayed) {
-				const icon = new St.Icon({
-					icon_name,
-					style_class: 'system-status-icon',
-					style: `margin-right:0;${colorStyle}${
-						id ? '' : 'margin-left:0px;' // remove margin-left for first Icon
-					}`
-				})
-				const label = new St.Label({
-					text: parseInt(device.percentage, 10)+'%',
-					style_class: 'battery-indicator-label',
-					style: `${colorStyle}${fontStyle}`,
-					y_align: Clutter.ActorAlign.CENTER
-				})
-				container.add_child(icon)
-				container.add_child(label)
-			}
+			const icon = new St.Icon({
+				icon_name,
+				style_class: 'system-status-icon',
+				style: `margin-right:0;${colorStyle}${
+					id ? '' : 'margin-left:0px;' // remove margin-left for first Icon
+				}`
+			})
+			const label = new St.Label({
+				text: parseInt(device.percentage, 10)+'%',
+				style_class: 'battery-indicator-label',
+				style: `${colorStyle}${fontStyle}`,
+				y_align: Clutter.ActorAlign.CENTER
+			})
+			container.add_child(icon)
+			container.add_child(label)
 		})
 	}
 
