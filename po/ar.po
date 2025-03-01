@@ -1,57 +1,66 @@
 # Arabic translations for battery-indicator@jgotti.org.
-
 msgid ""
 msgstr ""
+"Report-Msgid-Bugs-To: Jonathan Gotti <jgotti@jgotti.org>\n"
+"POT-Creation-Date: 2025-02-28 16:27+0100\n"
 "Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Gtranslator 41.0\n"
 
-#: extension.js:244
+#: src/extension.js:276
 msgid "Refresh now"
 msgstr "تحديث"
 
-#: extension.js:255
+#: src/extension.js:287
 msgid "Settings"
 msgstr "الإعدادات"
 
-#: prefs.js:63
+#: src/prefs.js:55
 msgid "General"
 msgstr "عام"
 
-#: prefs.js:69
+#: src/prefs.js:60
 msgid "Global Settings"
 msgstr "الإعدادات العامة"
 
-#: prefs.js:86
+#: src/prefs.js:80
 msgid "Refresh interval"
 msgstr "الفاصل الزمني للتحديث"
 
-#: prefs.js:87
+#: src/prefs.js:81
 msgid "Number of seconds to wait before automatic refresh of info."
 msgstr "عدد الثواني قبل التحديث التلقائي للمعلومات."
 
-#: prefs.js:99
+#: src/prefs.js:93
 msgid "Allow manual refresh"
 msgstr "السماح بالتحديث اليدوي"
 
-#: prefs.js:100
+#: src/prefs.js:94
 msgid "Whether to add a menu item to manually refresh indicators info."
 msgstr "إضافة عنصر قائمة لتحديث معلومات المؤشرات يدويًا."
 
-#: prefs.js:107
+#: src/prefs.js:101
 msgid "Quick settings access"
 msgstr "الوصول السريع إلى الإعدادات"
 
-#: prefs.js:108
+#: src/prefs.js:102
 msgid "Whether to add a settings menu item in popup menu or not."
 msgstr "إضافة عنصر الإعدادات في القائمة المنبثقة."
 
-#: prefs.js:115
+#: src/prefs.js:109
+msgid "Hide empty indicator"
+msgstr "إخفاء المؤشر الفارغ"
+
+#: src/prefs.js:110
+msgid "Whether to hide indicator when no device to display."
+msgstr "إخفاء المؤشر عندما لا يوجد جهاز للعرض"
+
+#: src/prefs.js:117
 msgid "Use symbolic icons"
 msgstr "استخدم الأيقونات الرمزية"
 
-#: prefs.js:116
+#: src/prefs.js:118
 msgid "Use black & white icons instead of colorfull icons."
 msgstr "استخدم الرموز بالأبيض والأسود بدلاً من الرموز الملونة."

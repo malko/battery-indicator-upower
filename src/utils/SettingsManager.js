@@ -23,7 +23,7 @@ class SettingsManagerClass {
 		// user regisetered listeners
 		this._observers = {}
 		this._settingsDefArray = settingsDef
-		this._settingsDefDic   = settingsDef.reduce((def, cur) => {
+		this._settingsDefDic = settingsDef.reduce((def, cur) => {
 			def[cur.key] = cur
 			return def
 		}, {})
@@ -34,7 +34,7 @@ class SettingsManagerClass {
 		if (!this._observer) {
 			this._observer = this._gsettings.connect('changed', () => {
 				Object.entries(this._observers).forEach(([prop, handlersMap]) => {
-					handlersMap.forEach(handler => handler(prop !== '/'? this.get(prop) : undefined))
+					handlersMap.forEach(handler => handler(prop !== '/' ? this.get(prop) : undefined))
 				})
 			})
 		}
@@ -67,7 +67,7 @@ class SettingsManagerClass {
 	}
 
 	_getPropType(prop) {
-		if (! (prop in this._settingsDefDic))
+		if (!(prop in this._settingsDefDic))
 			throw new Error(`Trying to access unknown setting property "${prop}"`)
 		return this._settingsDefDic[prop].type
 	}

@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: battery-indicator@jgotti.org package\n"
-"Report-Msgid-Bugs-To: Jonathan Gotti\n"
-"POT-Creation-Date: 2022-12-23 13:18+0100\n"
+"Report-Msgid-Bugs-To: Jonathan Gotti <jgotti@jgotti.org>\n"
+"POT-Creation-Date: 2025-02-28 16:27+0100\n"
 "PO-Revision-Date: 2022-12-23 13:36+0100\n"
 "Last-Translator: Jonathan Gotti <jgotti@jgotti.org>\n"
 "Language-Team: French - France <jgotti@jgotti.org>\n"
@@ -18,54 +18,62 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 "X-Generator: Gtranslator 41.0\n"
 
-#: extension.js:244
+#: src/extension.js:276
 msgid "Refresh now"
 msgstr "Rafraîchir maintenant"
 
-#: extension.js:255
+#: src/extension.js:287
 msgid "Settings"
 msgstr "Paramètres"
 
-#: prefs.js:63
+#: src/prefs.js:55
 msgid "General"
 msgstr "Général"
 
-#: prefs.js:69
+#: src/prefs.js:60
 msgid "Global Settings"
 msgstr "Paramètres Généraux"
 
-#: prefs.js:86
+#: src/prefs.js:80
 msgid "Refresh interval"
 msgstr "Interval de rafraîchissement"
 
-#: prefs.js:87
+#: src/prefs.js:81
 msgid "Number of seconds to wait before automatic refresh of info."
 msgstr ""
 "Nombre de secondes à attendre avant le prochain rafraîchissement automatique."
 
-#: prefs.js:99
+#: src/prefs.js:93
 msgid "Allow manual refresh"
 msgstr "Autoriser le rafraîchissement manuel"
 
-#: prefs.js:100
+#: src/prefs.js:94
 msgid "Whether to add a menu item to manually refresh indicators info."
 msgstr ""
 "Cela permet d'ajouter ou non une entrée de menu permettant de rafraîchir "
 "manuellement les informations de l'indicateur."
 
-#: prefs.js:107
+#: src/prefs.js:101
 msgid "Quick settings access"
 msgstr "Accès rapide aux paramètres"
 
-#: prefs.js:108
+#: src/prefs.js:102
 msgid "Whether to add a settings menu item in popup menu or not."
 msgstr ""
 "Cela permet d'ajouter ou non une entrée de menu pour accéder aux paramètres."
 
-#: prefs.js:115
+#: src/prefs.js:109
+msgid "Hide empty indicator"
+msgstr "Masquer l'indicateur si vide"
+
+#: src/prefs.js:110
+msgid "Whether to hide indicator when no device to display."
+msgstr "Cela masquera l'indicateur si aucune entrée selectionnée n'est disponible."
+
+#: src/prefs.js:117
 msgid "Use symbolic icons"
 msgstr "Utiliser les icônes symboliques"
 
-#: prefs.js:116
+#: src/prefs.js:118
 msgid "Use black & white icons instead of colorfull icons."
 msgstr "Utiliser des icônes en noir et blanc au lieu d'icônes colorées."

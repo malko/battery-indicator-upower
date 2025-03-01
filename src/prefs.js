@@ -20,11 +20,11 @@ import Gtk from 'gi://Gtk'
 import Gio from 'gi://Gio'
 
 // It's common practice to keep GNOME API and JS imports in separate blocks
-import {ExtensionPreferences, gettext as _} from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
+import { ExtensionPreferences, gettext as _ } from 'resource:///org/gnome/Shell/Extensions/js/extensions/prefs.js';
 
-const makeActionSwitchRow = ({title, subtitle, settingsProp}, gsettings) => {
-	const row = new Adw.ActionRow({title, subtitle})
-	const switchButton = new Gtk.Switch({valign: Gtk.Align.CENTER})
+const makeActionSwitchRow = ({ title, subtitle, settingsProp }, gsettings) => {
+	const row = new Adw.ActionRow({ title, subtitle })
+	const switchButton = new Gtk.Switch({ valign: Gtk.Align.CENTER })
 	row.add_suffix(switchButton)
 	row.set_activatable_widget(switchButton)
 
@@ -38,78 +38,86 @@ const makeActionSwitchRow = ({title, subtitle, settingsProp}, gsettings) => {
 }
 
 export default class BatteryUpowerExtensionPreferences extends ExtensionPreferences {
-/**
- * This function is called when the preferences window is first created to fill
- * the `Adw.PreferencesWindow`.
- *
- * This function will only be called by GNOME 42 and later. If this function is
- * present, `buildPrefsWidget()` will never be called.
- *
- * @param {Adw.PreferencesWindow} window - The preferences window
- */
-fillPreferencesWindow(window) {
-	window._settings = this.getSettings();
-	const settings = this.getSettings();
-	const prefsPage = new Adw.PreferencesPage({
-		name: 'general',
-		title: _('General'),
-		icon_name: 'preferences-other-symbolic',
-	})
+	/**
+	 * This function is called when the preferences window is first created to fill
+	 * the `Adw.PreferencesWindow`.
+	 *
+	 * This function will only be called by GNOME 42 and later. If this function is
+	 * present, `buildPrefsWidget()` will never be called.
+	 *
+	 * @param {Adw.PreferencesWindow} window - The preferences window
+	 */
+	fillPreferencesWindow(window) {
+		window._settings = this.getSettings();
+		const settings = this.getSettings();
+		const prefsPage = new Adw.PreferencesPage({
+			name: 'general',
+			title: _('General'),
+			icon_name: 'preferences-other-symbolic',
+		})
 
-	const prefsGroup = new Adw.PreferencesGroup({
-		title: _('Global Settings'),
-		// description: `Configure ${Me.metadata.name} behaviour`,
-	})
-	prefsPage.add(prefsGroup)
+		const prefsGroup = new Adw.PreferencesGroup({
+			title: _('Global Settings'),
+			// description: `Configure ${Me.metadata.name} behaviour`,
+		})
+		prefsPage.add(prefsGroup)
 
-	window.add(prefsPage)
+		window.add(prefsPage)
 
-	//-- automatic refresh interval
-	const refreshIntervalEntry = new Gtk.SpinButton({
-		valign: Gtk.Align.CENTER,
-		adjustment: new Gtk.Adjustment({
-			lower: 5,
-			upper: 86400,
-			step_increment: 1,
-			page_increment: 1,
-			page_size: 0
-		}),
-		digits: 0,
-	})
-	const refreshIntervalRow = new Adw.ActionRow({
-		title: _('Refresh interval'),
-		subtitle: _('Number of seconds to wait before automatic refresh of info.'),
-		activatable_widget: refreshIntervalEntry
-	})
-	prefsGroup.add(refreshIntervalRow)
-	refreshIntervalEntry.set_value(settings.get_uint('refresh-interval'))
-	refreshIntervalEntry.connect('value-changed', () => {
-		settings.set_uint('refresh-interval', refreshIntervalEntry.get_value())
-	})
-	refreshIntervalRow.add_suffix(refreshIntervalEntry)
+		//-- automatic refresh interval
+		const refreshIntervalEntry = new Gtk.SpinButton({
+			valign: Gtk.Align.CENTER,
+			adjustment: new Gtk.Adjustment({
+				lower: 5,
+				upper: 86400,
+				step_increment: 1,
+				page_increment: 1,
+				page_size: 0
+			}),
+			digits: 0,
+		})
+		const refreshIntervalRow = new Adw.ActionRow({
+			title: _('Refresh interval'),
+			subtitle: _('Number of seconds to wait before automatic refresh of info.'),
+			activatable_widget: refreshIntervalEntry
+		})
+		prefsGroup.add(refreshIntervalRow)
+		refreshIntervalEntry.set_value(settings.get_uint('refresh-interval'))
+		refreshIntervalEntry.connect('value-changed', () => {
+			settings.set_uint('refresh-interval', refreshIntervalEntry.get_value())
+		})
+		refreshIntervalRow.add_suffix(refreshIntervalEntry)
 
-	//-- allow manual refresh
-	const refreshItemRow = makeActionSwitchRow({
-		title: _('Allow manual refresh'),
-		subtitle: _('Whether to add a menu item to manually refresh indicators info.'),
-		settingsProp: 'refresh-menuitem'
-	}, settings)
-	prefsGroup.add(refreshItemRow)
+		//-- allow manual refresh
+		const refreshItemRow = makeActionSwitchRow({
+			title: _('Allow manual refresh'),
+			subtitle: _('Whether to add a menu item to manually refresh indicators info.'),
+			settingsProp: 'refresh-menuitem'
+		}, settings)
+		prefsGroup.add(refreshItemRow)
 
-	//-- add a settings menu entry
-	const settingsItemRow = makeActionSwitchRow({
-		title: _('Quick settings access'),
-		subtitle: _('Whether to add a settings menu item in popup menu or not.'),
-		settingsProp: 'settings-menuitem'
-	}, settings)
-	prefsGroup.add(settingsItemRow)
+		//-- add a settings menu entry
+		const settingsItemRow = makeActionSwitchRow({
+			title: _('Quick settings access'),
+			subtitle: _('Whether to add a settings menu item in popup menu or not.'),
+			settingsProp: 'settings-menuitem'
+		}, settings)
+		prefsGroup.add(settingsItemRow)
 
-	//-- Prefer symbolic icons
-	const useSymbolicIconsRow = makeActionSwitchRow({
-		title: _('Use symbolic icons'),
-		subtitle: _('Use black & white icons instead of colorfull icons.'),
-		settingsProp: 'symbolic-icons'
-	}, settings)
-	prefsGroup.add(useSymbolicIconsRow)
-}
+		//-- add a settings menu entry
+		const hideWhenEmptyRow = makeActionSwitchRow({
+			title: _('Hide empty indicator'),
+			subtitle: _('Whether to hide indicator when no device to display.'),
+			settingsProp: 'hideempty-menuitem'
+		}, settings)
+		prefsGroup.add(hideWhenEmptyRow)
+
+		//-- Prefer symbolic icons
+		const useSymbolicIconsRow = makeActionSwitchRow({
+			title: _('Use symbolic icons'),
+			subtitle: _('Use black & white icons instead of colorfull icons.'),
+			settingsProp: 'symbolic-icons'
+		}, settings)
+		prefsGroup.add(useSymbolicIconsRow)
+	}
 }

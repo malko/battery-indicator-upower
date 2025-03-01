@@ -15,7 +15,9 @@ Clicking on the indicators will reveal a menu which will let you display more in
 # Settings
 You can via the extension preferences, set the refresh interval and whether to add a manual refresh button or not. By default the refresh interval is 5 minutes.
 
-Also you can decide to show/hide devices from the panel indicator by clicking them in the indicator menu. item with now check mark in front of it are marked as hidden.
+Also you can decide to show/hide devices from the panel indicator by clicking them in the indicator menu. item without check mark are marked as hidden.
+
+If the "hide empty indicator" is set, then it will hide the indicator when all devices connected are marked as hidden. If you want to change this while the indicator is hidden, you must use either the extension manager to open the pref window or you can use dconf editor to revert the setting.
 
 Other settings are self explanatory
 
